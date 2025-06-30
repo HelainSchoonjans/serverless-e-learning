@@ -42,4 +42,4 @@ Type 'yes' when prompted to confirm
 #### To automatically approve without prompts
 
     terraform apply -auto-approve
-    terraform destroy -auto-approve<>
+    terraform destroy -auto-approve

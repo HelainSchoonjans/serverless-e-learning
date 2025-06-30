@@ -1,8 +1,10 @@
 import json
 #1. import boto3
 import boto3
+
 #2 create client connection with bedrock
 client_bedrock_knowledgebase = boto3.client('bedrock-agent-runtime')
+
 def lambda_handler(event, context):
     #3 Store the user prompt
     print(event['prompt'])
