@@ -12,7 +12,9 @@ Follow the steps in PREREQUISITES.md
 
 ### Commands
 
-The project infrastructure as code is defined in Terraform and can be interacted with the following commands:
+The project infrastructure as code is defined in Terraform and can be interacted with the following commands.
+
+You might need to manually sync the s3 source in the console after deploying the app.
 
 #### Initialize Terraform working directory, download providers and modules
 
