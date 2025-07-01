@@ -45,3 +45,17 @@ Type 'yes' when prompted to confirm
 
     terraform apply -auto-approve
     terraform destroy -auto-approve
+
+# Testing the knowledge base
+
+Open the knowledge base in the console, click on the test button. Choose the Claude 3 Haiku model.
+
+
+# Troubleshooting
+
+## Sorry, I am unable to assist you with this request.
+
+Talking to the knowledge base in the console, I can only get "Sorry, I am unable to assist you with this request."
+
+Solution???
+

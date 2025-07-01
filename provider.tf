@@ -14,13 +14,20 @@ terraform {
 
 provider "aws" {
   region = "eu-west-1"
+
+  default_tags {
+    tags = {
+      Environment     = local.env.environment
+      Service         = local.env.sid
+    }
+  }
 }
 
 terraform {
   backend "s3" {
     # create this bucket manually
     bucket = "terraform-state-creative-tech"
-    key    = "elearning-terraform.tfstate"
+    key    = "elearn.tfstate"
     region = "eu-west-1"
 
     # Enable state locking

@@ -107,7 +107,7 @@ resource "aws_opensearchserverless_access_policy" "data_access_policy" {
   ])
 }
 
-resource "opensearch_index" "vector_index" {
+resource "opensearch_index" "this" {
   name = local.aoss.vector_index
 
   mappings = jsonencode({

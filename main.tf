@@ -2,7 +2,22 @@
 
 # Create S3 bucket
 resource "aws_s3_bucket" "knowledge_bucket" {
-  bucket = "elearning-knowledge-base-bucket"
+  bucket = "${local.env.sid}-knowledge-base-bucket"
+}
+
+resource "aws_s3_bucket_cors_configuration" "this" {
+  bucket = aws_s3_bucket.knowledge_bucket.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = [
+      "GET",
+      "PUT",
+      "POST",
+      "DELETE"
+    ]
+    allowed_origins = ["*"]
+  }
 }
 
 # Upload files from S3Docs folder
@@ -25,24 +40,9 @@ resource "aws_s3_bucket_public_access_block" "block_public" {
   restrict_public_buckets = true
 }
 
-/*resource "aws_s3_bucket_cors_configuration" "this" {
-  bucket = aws_s3_bucket.knowledge_bucket.id
-
-  cors_rule {
-    allowed_headers = ["*"]
-    allowed_methods = [
-      "GET",
-      "PUT",
-      "POST",
-      "DELETE"
-    ]
-    allowed_origins = ["*"]
-  }
-}*/
-
 # Create IAM role for Bedrock knowledge base
 resource "aws_iam_role" "bedrock_kb_role" {
-  name = "bedrock-knowledge-base-role"
+  name = "${local.env.sid}-bedrock-kb-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -60,7 +60,7 @@ resource "aws_iam_role" "bedrock_kb_role" {
 
 # Create IAM policy for S3 access
 resource "aws_iam_role_policy" "bedrock_kb_policy" {
-  name = "bedrock-knowledge-base-policy"
+  name = "${local.env.sid}-bedrock-kb-policy"
   role = aws_iam_role.bedrock_kb_role.id
 
   policy = jsonencode({
@@ -83,7 +83,7 @@ resource "aws_iam_role_policy" "bedrock_kb_policy" {
 
 # Policy for opensearch access
 resource "aws_iam_role_policy" "bedrock_kb_oass_policy" {
-  name = "bedrock-knowledge-oass-policy"
+  name = "${local.env.sid}-bedrock-kb-oass-policy"
   role = aws_iam_role.bedrock_kb_role.id
 
   policy = jsonencode({
@@ -104,7 +104,7 @@ resource "aws_iam_role_policy" "bedrock_kb_oass_policy" {
 
 # Policy for opensearch access
 resource "aws_iam_role_policy" "bedrock_kb_model_policy" {
-  name = "bedrock-knowledge-model-policy"
+  name = "${local.env.sid}-bedrock-kb-model-policy"
   role = aws_iam_role.bedrock_kb_role.id
 
   policy = jsonencode({
@@ -116,7 +116,8 @@ resource "aws_iam_role_policy" "bedrock_kb_model_policy" {
           "bedrock:InvokeModel"
         ]
         Resource = [
-         data.aws_bedrock_foundation_model.embedding.model_arn
+         data.aws_bedrock_foundation_model.embedding.model_arn,
+         data.aws_bedrock_foundation_model.claude.model_arn,
         ]
       }
     ]
@@ -126,7 +127,7 @@ resource "aws_iam_role_policy" "bedrock_kb_model_policy" {
 
 locals {
     s3_uri = "s3://${aws_s3_bucket.knowledge_bucket.id}"
-    collection_name = "bedrock-kb-collection"
+    collection_name = "${local.env.sid}-bedrock-kb-collection"
 }
 
 # useful resource for opensearch configuration with terraform:
@@ -136,9 +137,13 @@ data "aws_bedrock_foundation_model" "embedding" {
   model_id = "amazon.titan-embed-text-v2:0"
 }
 
+data "aws_bedrock_foundation_model" "claude" {
+  model_id = "anthropic.claude-3-haiku-20240307-v1:0"
+}
+
 # Create Bedrock knowledge base
 resource "aws_bedrockagent_knowledge_base" "elearning_kb" {
-  name = "elearning-bedrock-knowledge-base"
+  name = "${local.env.sid}-bedrock-kb"
   role_arn = aws_iam_role.bedrock_kb_role.arn
 
   knowledge_base_configuration {
@@ -155,7 +160,7 @@ resource "aws_bedrockagent_knowledge_base" "elearning_kb" {
       vector_index_name = "bedrock-knowledge-base-default-index" 
       field_mapping {
         vector_field   = "bedrock-knowledge-base-default-vector"
-        text_field     = "AMAZON_BEDROCK_TEXT_CHUNK"
+        text_field     = "AMAZON_BEDROCK_TEXT"
         metadata_field = "AMAZON_BEDROCK_METADATA"
       }
     }
@@ -164,7 +169,7 @@ resource "aws_bedrockagent_knowledge_base" "elearning_kb" {
 
 resource "aws_bedrockagent_data_source" "s3_source" {
   knowledge_base_id = aws_bedrockagent_knowledge_base.elearning_kb.id
-  name              = "s3-source"
+  name              = "${local.env.sid}-s3-source"
   data_source_configuration {
     type = "S3"
     s3_configuration {
