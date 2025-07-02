@@ -7,7 +7,7 @@ terraform {
     }
     opensearch = {
       source  = "opensearch-project/opensearch"
-      version = "2.3.1"
+      version = "~> 2.3.0"
     }
   }
 }
@@ -27,7 +27,7 @@ terraform {
   backend "s3" {
     # create this bucket manually
     bucket = "terraform-state-creative-tech"
-    key    = "elearn.tfstate"
+    key    = "elearn2.tfstate"
     region = "eu-west-1"
 
     # Enable state locking

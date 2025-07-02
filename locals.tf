@@ -3,7 +3,7 @@ locals {
   env = {
     environment  = "dev"
     region_name  = "eu-west-1"
-    sid          = "elearn"
+    sid          = "elearn2"
   }
   aoss = {
     vector_index     = "bedrock-knowledge-base-default-index"

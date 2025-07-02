@@ -1,6 +1,10 @@
 import json
 #1. import boto3
 import boto3
+import os
+
+KNOWLEDGE_BASE_ID = os.environ['KNOWLEDGE_BASE_ID']
+MODEL_ARN = os.environ['MODEL_ARN']
 
 #2 create client connection with bedrock
 client_bedrock_knowledgebase = boto3.client('bedrock-agent-runtime')
@@ -17,10 +21,10 @@ def lambda_handler(event, context):
     retrieveAndGenerateConfiguration={
         'type': 'KNOWLEDGE_BASE',
         'knowledgeBaseConfiguration': {
-            'knowledgeBaseId': 'O41RCIQ46A',
-            'modelArn': 'arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-instant-v1'
-                }
-            })
+            'knowledgeBaseId': KNOWLEDGE_BASE_ID,
+            'modelArn': MODEL_ARN
+        }
+    })
             
     # print(client_knowledgebase)     
     #print(client_knowledgebase['output']['text'])
