@@ -122,6 +122,11 @@ resource "opensearch_index" "this" {
         index = true
       }
 
+      "${local.aoss.text_field}_CHUNK" = {
+        type  = "text"
+        index = true
+      }
+
       "${local.aoss.vector_field}" = {
         type      = "knn_vector"
         dimension = "${local.aoss.vector_dimension}"
@@ -132,6 +137,8 @@ resource "opensearch_index" "this" {
       }
     }
   })
+  # can be destroyed and recreated on changes in terraform
+  force_destroy = true
 
   depends_on = [aws_opensearchserverless_collection.collection]
 }

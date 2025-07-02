@@ -59,3 +59,6 @@ Talking to the knowledge base in the console, I can only get "Sorry, I am unable
 
 Solution???
 
+## Continue
+
+Still need to solve the previous issue
