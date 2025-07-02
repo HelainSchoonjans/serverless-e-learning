@@ -11,8 +11,8 @@ client_bedrock_knowledgebase = boto3.client('bedrock-agent-runtime')
 
 def lambda_handler(event, context):
     #3 Store the user prompt
-    print(event['prompt'])
-    user_prompt=event['prompt']
+    user_prompt = event['queryStringParameters']['prompt']
+    print(user_prompt)
     # 4. Use retrieve and generate API
     client_knowledgebase = client_bedrock_knowledgebase.retrieve_and_generate(
     input={
