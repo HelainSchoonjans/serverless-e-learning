@@ -110,6 +110,8 @@ resource "aws_opensearchserverless_access_policy" "data_access_policy" {
 resource "opensearch_index" "this" {
   name = local.aoss.vector_index
 
+  index_knn = true
+
   mappings = jsonencode({
     properties = {
       "${local.aoss.metadata_field}" = {

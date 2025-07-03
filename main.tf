@@ -81,6 +81,52 @@ resource "aws_iam_role_policy" "bedrock_kb_policy" {
   })
 }
 
+# Permissions to chat with documents
+resource "aws_iam_role_policy" "bedrock_kb_chat_policy" {
+  name = "${local.env.sid}-bedrock-kb-chat-policy"
+  role = aws_iam_role.bedrock_kb_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "bedrock:RetrieveAndGenerate"
+        ]
+        Resource = [
+          "*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "bedrock_kb_kms_policy" {
+  name = "${local.env.sid}-bedrock-kb-kms-policy"
+  role = aws_iam_role.bedrock_kb_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt"
+        ]
+        Resource = [
+          "arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*"
+        ]
+        Condition = {
+          StringLike = {
+            "kms:ViaService": "aoss.*.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
+}
+
 # Policy for opensearch access
 resource "aws_iam_role_policy" "bedrock_kb_oass_policy" {
   name = "${local.env.sid}-bedrock-kb-oass-policy"
@@ -116,8 +162,7 @@ resource "aws_iam_role_policy" "bedrock_kb_model_policy" {
           "bedrock:InvokeModel"
         ]
         Resource = [
-         data.aws_bedrock_foundation_model.embedding.model_arn,
-         data.aws_bedrock_foundation_model.claude.model_arn,
+         data.aws_bedrock_foundation_model.embedding.model_arn
         ]
       }
     ]
@@ -170,6 +215,8 @@ resource "aws_bedrockagent_knowledge_base" "elearning_kb" {
 resource "aws_bedrockagent_data_source" "s3_source" {
   knowledge_base_id = aws_bedrockagent_knowledge_base.elearning_kb.id
   name              = "${local.env.sid}-s3-source"
+  data_deletion_policy = "RETAIN"
+
   data_source_configuration {
     type = "S3"
     s3_configuration {
