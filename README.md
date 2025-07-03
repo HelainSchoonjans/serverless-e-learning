@@ -57,8 +57,4 @@ Open the knowledge base in the console, click on the test button. Choose the Cla
 
 Talking to the knowledge base in the console, I can only get "Sorry, I am unable to assist you with this request."
 
-Solution???
-
-## Continue
-
-Still need to solve the previous issue
+Solution: Permissions and settings were updated in Terraform. For some reason the datasource had to be synced twice manually.
