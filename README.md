@@ -4,6 +4,14 @@ This project comes from the [Bedrock/GenAI Udemy course](https://www.udemy.com/c
 
 It is a simple serverless API querying a Bedrock knowledge base of AWS documentation pdfs.
 
+## Usage
+
+Follow the instructions in the next sections to deploy the knowledge base.
+
+Then go to the AWS console, log in your account and ask questions about AWS to the Knowledge base:
+
+![Usage](diagrams/usage.png)
+
 ## Prerequisites
 
 Follow the steps in PREREQUISITES.md
